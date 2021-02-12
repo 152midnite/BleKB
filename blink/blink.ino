@@ -31,40 +31,50 @@ int sweep(int in_pins[], int out_pins[], char keys[][13]) {
 return 0;}
 
 
-int in_pins[13] = {12,14,27,26,25,33,32,35,34,39,36,13,15};
-int out_pins[4] = {2,4,16,17};
+int in_pins[13] = {36,39,34,35,23,19,21,22};
+int out_pins[10] = {5,13,12,4,32,33,25,26,27,14};
 char keys[4][13] = {{'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']'},
                     {'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';'},
                     {'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/'},
-                    {}};
+                    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}};
 
 
 
 void setup() {
   Serial.begin(115200);
+  pinMode(36, INPUT);
+  pinMode(39, INPUT);
   pinMode(34, INPUT);
   pinMode(35, INPUT);
-  pinMode(17, OUTPUT);
+
+  pinMode(23, INPUT_PULLDOWN);
+  pinMode(19, INPUT_PULLDOWN);
+  pinMode(21, INPUT_PULLDOWN);
+  pinMode(22, INPUT_PULLDOWN);
+
+ 
+
   Serial.println("Starting BLE work!");
   bleKeyboard.begin();
+	int n = sizeof(out_pins);
+	int i, j;
+  for (j=0;j<n;j++){pinMode(out_pins[j], OUTPUT);}
+  for (i=0;i<n;i++){digitalWrite(out_pins[i], HIGH);}
 }
 
 
 void loop() {
   if (bleKeyboard.isConnected()) {
-
     //bleKeyboard.print("Hello world");
-
-    sweep(in_pins, out_pins, keys);
-    /*
-        bleKeyboard.print("Hello world");
-        bleKeyboard.write(KEY_RETURN);
-        bleKeyboard.write(KEY_MEDIA_PLAY_PAUSE);
-        bleKeyboard.press(KEY_LEFT_CTRL);
-        bleKeyboard.press(KEY_LEFT_ALT);
-        bleKeyboard.press(KEY_DELETE);
-        bleKeyboard.releaseAll();
-    */
+		if (digitalRead(23) == HIGH){bleKeyboard.press('a');}
+		else{bleKeyboard.release('a');}
+		if (digitalRead(19) == HIGH){bleKeyboard.press('b');}
+		else{bleKeyboard.release('b');}
+		if (digitalRead(21) == HIGH){bleKeyboard.press('c');}
+		else{bleKeyboard.release('c');}
+		if (digitalRead(22) == HIGH){bleKeyboard.press(KEY_BACKSPACE);}
+		else{bleKeyboard.release(KEY_BACKSPACE);}
+		        //bleKeyboard.write('a');
   }
-  Serial.println("Waiting 5 seconds...");
-  delay(5000);}
+  delay(5);
+}
